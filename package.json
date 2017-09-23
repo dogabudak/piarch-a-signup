@@ -1,0 +1,20 @@
+{
+  "name": "piarch-a-signup",
+  "version": "1.0.0",
+  "description": "sign-up service for piarch-a",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "cogent": "^1.0.1",
+    "connect": "^3.5.0",
+    "cors": "^2.8.1",
+    "jsonwebtoken": "^7.1.9",
+    "koa": "^1.2.4",
+    "koa-route": "^2.4.2",
+    "mongojs": "^2.4.0"
+  }
+}
