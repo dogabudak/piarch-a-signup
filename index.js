@@ -7,7 +7,6 @@ const mongojs = require('mongojs'),
     jwt = require('jsonwebtoken'),
     config = require('./resources/config.js'),
     db = mongojs(config.mongo.url, ['users']),
-    connect = require('connect'),
     fs = require('fs'),
     private_key = fs.readFileSync('./keys/' + 'piarch_a'),
     koa = require('koa'),
@@ -43,11 +42,11 @@ function signUp(req) {
                         };
                     db.users.insert({"username": username, "password": password}, function (err, reply) {
                         if (err) {
-                            console.log(err)
+                          reject({})
+                          //TODO handle errors
                         } else {
                             delete reply._id
                             reply.token = jwt.sign(data, private_key, options);
-                            console.log(reply)
                             fulfill(reply)
                         }
                     })
