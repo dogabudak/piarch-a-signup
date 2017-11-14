@@ -16,16 +16,8 @@ const mongojs = require('mongojs'),
 var app = koa();
 
 app.use(route.get('/signup', newSignup));
-//app.use(route.get('/update', update));
-
 
 app.listen(config.server.port);
-/*
- function * update() {
- console.log(this.header)
- this.body = yield updateUser(this.header);
- }
- */
 
 function * newSignup() {
     this.body = yield signUp(this.header);
@@ -69,44 +61,3 @@ function signUp(req) {
         })
     })
 }
-
-/*
- function updateUser(req) {
- return new Promise(function (fulfill, reject) {
- var username;
- var obj = JSON.parse(req.obj)
- //let tokeninfo = yield checkToken("news_yorum", es_query, self.req.auth_payload,commentOption);
-
- db.users.find({"username": username}, function (err, reply) {
- if (reply === null || reply === undefined || reply.length === 0) {
- db.users.update({"username": username}, {$set: obj}, function (err, reply) {
- if (err === null || err === undefined) {
- fulfill(reply)
- }
- })
- } else {
- reject()
- }
- })
-
- })
- }
- */
-/*
- function checkToken() {
- var authorize = this.headers.authorize;
- if (!authorize) {
- this.throw(' request ip is: ' + this.req.connection.remoteAddress, 400);
- }
- if (authorize.split(' ').length !== 2) {
- this.throw(' request ip is: ' + this.req.connection.remoteAddress, 400);
- }
- var response = yield http(config.authnUrl, {json: true, headers: {'Authorize': authorize}});
- var answer = response.body;
- if (response.statusCode === 200 && answer.authenticated === true) {
- yield* next;
- } else {
- this.throw(401);
- }
- }
- */
