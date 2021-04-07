@@ -2,7 +2,6 @@
  * Created by doga on 22/10/2016.
  */
 
-
 const jwt = require('jsonwebtoken');
 const config = require('./resources/config.js');
 const fs = require('fs');
@@ -13,45 +12,44 @@ const route = require('koa-route');
 const MongoClient = require('mongodb').MongoClient;
 const client = new MongoClient(config.mongo.url, {useNewUrlParser: true});
 
-const app = koa();
-app.use(route.get('/signup', newSignup));
+const app = new koa();
+app.use(route.get('/signup', async (ctx) => {
+    const result = await signUp(ctx.header).catch((err) => {
+        console.log(err)
+    });
+    ctx.body = result.token
+}));
 
 app.listen(config.server.port);
 
-function* newSignup() {
-    this.body = yield signUp(this.header);
-}
-
-function signUp(req) {
-  return new Promise(function (fulfill, reject) {
-    client.connect(err => {
-      var username = req.username;
-      var password = req.password;
-      console.log(username, password)
-      if (username.length < 3 || password.length < 3) {
-        fulfill(null)
-      }
-      const collection = client.db("piarka").collection("users");
-        collection.find({"username": username}).toArray(function (err, reply) {
-        if (reply[0] === undefined) {
-          if ((err === null || err === undefined)) {
-          var data = {sub: username, iss: 'piarch_a'}, options = {algorithm: 'RS256', expiresIn: (10 * 60 * 60)};
-            collection.insertMany([{"username": username, "password": password} ], function (err, reply) {
-              if (err) {
-                reject({})
-                //TODO handle errors
+function signUp(header) {
+    return new Promise(function (fulfill, reject) {
+        client.connect(err => {
+            if (err || header === undefined) {
+                reject({message: err})
+            }
+            let username = header.username;
+            let password = header.password;
+            if (username.length < 3 || password.length < 3) {
+                reject({message: 'username or password too short'})
+            }
+            const collection = client.db("piarka").collection("users");
+            collection.find({"username": username}).toArray(function (err, reply) {
+                if (reply[0] === undefined && (err === null || err === undefined)) {
+                    const data = {sub: username, iss: 'piarch_a'};
+                    const options = {algorithm: 'RS256', expiresIn: (10 * 60 * 60)};
+                    collection.insertMany([{"username": username, "password": password}],  (err, reply) => {
+                        if (err) {
+                            reject({message: err})
+                        } else {
+                            delete reply._id
+                            reply.token = jwt.sign(data, private_key, options);
+                            fulfill(reply)
+                        }
+                    });
                 } else {
-                  delete reply._id
-                  reply.token = jwt.sign(data, private_key, options);
-                  fulfill(reply)
+                    reject({message: 'This user already exist'})
                 }
-              });
-              } else {
-                reject({})
-              }
-              } else {
-                reject({})
-              }
             })
         })
 

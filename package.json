@@ -13,8 +13,8 @@
     "connect": "^3.5.0",
     "cors": "^2.8.1",
     "jsonwebtoken": "^7.1.9",
-    "koa": "^1.2.4",
-    "koa-route": "^2.4.2",
+    "koa": "2.13.1",
+    "koa-route": "3.2.0",
     "mongodb": "3.6.4"
   }
 }
